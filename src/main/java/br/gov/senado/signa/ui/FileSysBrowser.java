@@ -11,6 +11,9 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class FileSysBrowser extends JPanel {
 
+	private static final String PATH_USER_HOME = System
+			.getProperty("user.home");
+
 	public FileSysBrowser() {
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
