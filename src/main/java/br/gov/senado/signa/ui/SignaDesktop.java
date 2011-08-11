@@ -29,7 +29,7 @@ public class SignaDesktop {
 	public void initGUI() {
 		mainWindow = new JFrame("Signa - Assinador Digital");
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainWindow.setPreferredSize(new Dimension(600, 400));
+		mainWindow.setPreferredSize(new Dimension(800, 600));
 
 		mainWindow.getContentPane().setLayout(new BorderLayout());
 		mainWindow.getContentPane().add(new SignaToolBar(),
