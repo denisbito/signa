@@ -11,9 +11,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 /**
- * Constantes e métodos do ambiente de teste.
+ * Test environment constants and methods
  * 
- * @author Denis Oliveira
+ * @author Denis Oliveira - denisbito@gmail.com
  */
 public class TestEnvironment {
 
@@ -21,21 +21,22 @@ public class TestEnvironment {
 	public static String KEYSTORE_PASSWD = "signa-pa55wd";
 
 	/**
-	 * Cria a keystore Java de teste, a partir do arquivo
+	 * Creates a test Java Keystore, from the file
 	 * "resources/signa-cacert-certificates.p12".
 	 * 
-	 * Uma keystore em Java é um local onde se guarda certificados e chaves
-	 * critpográficas, e normalmente é salvo em um arquivo em disco.
+	 * A Java Keystore is a place where certificates and cryptographic keys are
+	 * stored, normally kept as a file on the filesystem.
 	 * 
-	 * @return a keyStore carregada com os certificados constantes do arquivo.
+	 * @return the test KeyStore object, loaded with the certificates it
+	 *         contains.
 	 */
 	public static KeyStore createTestJavaKeyStore() throws KeyStoreException,
 			IOException, NoSuchAlgorithmException, CertificateException,
 			FileNotFoundException, URISyntaxException {
-		// criar uma nova keystore Java
+		// create a new Java Keystore
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
 
-		// carregar a keystore a partir do arquivo
+		// load the keystore from a local file
 		File file = new File(TestEnvironment.class.getResource(
 				KEYSTORE_FILENAME).toURI());
 		keyStore.load(new FileInputStream(file), KEYSTORE_PASSWD.toCharArray());

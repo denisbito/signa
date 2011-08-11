@@ -14,7 +14,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 /**
- * Navegador de sistema de arquivos.
+ * Rudimentary filesystem browser.
  * 
  * @author Denis Oliveira - denisbito@gmail.com
  */
@@ -24,21 +24,21 @@ public class FileSysBrowser extends JPanel {
 	public FileSysBrowser() {
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
-		// criar um JSplitPane para colocar os dois outros componentes
+		// create a JSplitPane for holding the other components
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		add(splitPane);
 
-		// adicionar árvore de diretórios
+		// add the directory tree
 		JScrollPane dirPane = new JScrollPane(new DirTree());
 		dirPane.setPreferredSize(new Dimension(240, 0));
 		splitPane.add(dirPane);
 
-		// adicionar tabela de arquivos
+		// add the file view table
 		splitPane.add(new JScrollPane(new FileTable()));
 	}
 
 	/**
-	 * Árvore de diretórios exibida pelo navegador de arquivos.
+	 * Directory tree shown in the file browser.
 	 */
 	class DirTree extends JTree {
 		public DirTree() {
@@ -48,7 +48,7 @@ public class FileSysBrowser extends JPanel {
 	}
 
 	/**
-	 * Tabela que mostra informações de arquivos no filesystem.
+	 * File information table shown in the file browser.
 	 */
 	class FileTable extends JTable {
 		public FileTable() {
@@ -57,7 +57,7 @@ public class FileSysBrowser extends JPanel {
 	}
 
 	/**
-	 * TreeModel personalizado para a árvore de diretórios
+	 * Custom TreeModel for the directory tree.
 	 */
 	class DirTreeModel implements TreeModel {
 
@@ -68,8 +68,8 @@ public class FileSysBrowser extends JPanel {
 		}
 
 		/**
-		 * O model deve saber devolver, para um determinado nodo pai, o filho em
-		 * uma determinada posição.
+		 * Gets a child node in the corresponding position inside the parent
+		 * node.
 		 */
 		@Override
 		public Object getChild(Object parent, int index) {
@@ -82,7 +82,7 @@ public class FileSysBrowser extends JPanel {
 		}
 
 		/**
-		 * Informar ao JTree a quantidade de filhos de um nodo pai.
+		 * Informs the JTree about how many children a parent node has.
 		 */
 		@Override
 		public int getChildCount(Object parent) {
@@ -92,8 +92,8 @@ public class FileSysBrowser extends JPanel {
 		}
 
 		/**
-		 * Obter a posição de um nodo filho dentro de um nodo pai. Se o pai não
-		 * contiver o objeto filho, devolve a posição -1.
+		 * Get a child node's position inside the parent node. If the parent
+		 * doesn't hold the child, returns -1.
 		 */
 		@Override
 		public int getIndexOfChild(Object parent, Object child) {
@@ -112,31 +112,30 @@ public class FileSysBrowser extends JPanel {
 		}
 
 		/**
-		 * Informa ao JTree o nodo raiz da árvore
+		 * Returns the root node for the JTree.
 		 */
 		@Override
 		public Object getRoot() {
 			return root;
 		}
 
+		/**
+		 * Informs the JTree if the given node is a leaf or not.
+		 */
 		@Override
 		public boolean isLeaf(Object node) {
-			// TODO Auto-generated method stub
-			return false;
+			return ((File) node).isFile();
 		}
 
 		/**
-		 * Método não precisa ser implementado, pois é utilizado apenas por
-		 * árvores editáveis.
+		 * Not implemented, since the JTree isn't currently editable.
 		 */
 		@Override
 		public void valueForPathChanged(TreePath path, Object newValue) {
 		}
 
-		/**
-		 * Por enquanto, o TreeModel não será editável, portanto não é preciso
-		 * implementar os métodos de add/remove listeners.
-		 */
+		// add/remove listener methods won't be implemented, since the JTree
+		// isn't currently editable
 		@Override
 		public void addTreeModelListener(TreeModelListener l) {
 		}

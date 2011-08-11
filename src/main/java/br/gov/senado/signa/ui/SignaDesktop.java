@@ -7,7 +7,7 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 
 /**
- * Aplicativo Desktop para o Signa.
+ * Signa Desktop example application.
  * 
  * @author Denis Oliveira - denisbito@gmail.com
  */
@@ -24,7 +24,7 @@ public class SignaDesktop {
 	}
 
 	/**
-	 * Inicializa a interface gráfica do aplicativo.
+	 * Initializes the app's graphical interface.
 	 */
 	public void initGUI() {
 		mainWindow = new JFrame("Signa - Assinador Digital");

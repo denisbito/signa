@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 
 /**
- * Barra de botões.
+ * Button bar for the SignaDesktop application.
  * 
  * @author Denis Oliveira
  */
@@ -20,12 +20,12 @@ public class SignaToolBar extends JToolBar {
 	}
 
 	private void initGUI() {
-		// adicionar botões
+		// add buttons
 		add(createSignButton());
 	}
 
 	/**
-	 * Constrói o botão de "Assinar".
+	 * Construct the sign file button.
 	 */
 	private JButton createSignButton() {
 		JButton btAssinar = new JButton("Assinar");
@@ -33,7 +33,7 @@ public class SignaToolBar extends JToolBar {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO - implementar!!!
+				// TODO - code this!!!
 				JOptionPane.showMessageDialog(SignaDesktop.getMainWindow(),
 						"Não implementado.");
 			}
