@@ -2,6 +2,9 @@ package br.gov.senado.signa.ui;
 
 import java.awt.Dimension;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -10,18 +13,22 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 /**
- * Rudimentary filesystem browser.
+ * Rudimentary filesystem browser, for navigating the local filesystem.
  * 
  * @author Denis Oliveira - denisbito@gmail.com
  */
 @SuppressWarnings("serial")
 public class FileSysBrowser extends JPanel {
 
-	public FileSysBrowser() {
+	protected File currentDir;
+
+	public FileSysBrowser(File dir) {
+		setCurrentDir(dir);
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
 		// create a JSplitPane for holding the other components
@@ -30,11 +37,15 @@ public class FileSysBrowser extends JPanel {
 
 		// add the directory tree
 		JScrollPane dirPane = new JScrollPane(new DirTree());
-		dirPane.setPreferredSize(new Dimension(240, 0));
+		dirPane.setPreferredSize(new Dimension(260, 0));
 		splitPane.add(dirPane);
 
 		// add the file view table
 		splitPane.add(new JScrollPane(new FileTable()));
+	}
+
+	public FileSysBrowser() {
+		this(new File(System.getProperty("user.home")));
 	}
 
 	/**
@@ -42,7 +53,7 @@ public class FileSysBrowser extends JPanel {
 	 */
 	class DirTree extends JTree {
 		public DirTree() {
-			super(new DirTreeModel(new File(System.getProperty("user.home"))));
+			super(new DirTreeModel(getCurrentDir()));
 		}
 
 	}
@@ -52,7 +63,8 @@ public class FileSysBrowser extends JPanel {
 	 */
 	class FileTable extends JTable {
 		public FileTable() {
-
+			super(new FileListTableModel(FileSysBrowser.this.getCurrentDir()));
+			setShowGrid(false);
 		}
 	}
 
@@ -143,6 +155,91 @@ public class FileSysBrowser extends JPanel {
 		@Override
 		public void removeTreeModelListener(TreeModelListener l) {
 		}
+	}
+
+	/**
+	 * Custom TableModel for the file list table.
+	 */
+	class FileListTableModel extends AbstractTableModel {
+
+		private String[] columnNames = new String[] { "Nome", "Tamanho (KB)",
+				"Data modificação" };
+		private List<File> fileList;
+
+		public FileListTableModel(File dir) {
+			setFileList(Arrays.asList(dir.listFiles()));
+		}
+
+		/**
+		 * The file information table isn't currently editable.
+		 */
+		public boolean isCellEditable(int rowIndex, int columnIndex) {
+			return false;
+		}
+
+		/**
+		 * Get the number of columns in the JTable.
+		 */
+		@Override
+		public int getColumnCount() {
+			return this.columnNames.length;
+		}
+
+		/**
+		 * Get the column's name, given its index.
+		 */
+		@Override
+		public String getColumnName(int colIndex) {
+			return this.columnNames[colIndex];
+		}
+
+		/**
+		 * Get the number of rows in the JTable.
+		 */
+		@Override
+		public int getRowCount() {
+			return getFileList().size();
+		}
+
+		/**
+		 * Get the object at the specified row and column indexes.
+		 */
+		@Override
+		public Object getValueAt(int rowIndex, int colIndex) {
+			Object value = null;
+			File file = fileList.get(rowIndex);
+
+			switch (colIndex) {
+			case 0:
+				value = file.getName();
+				break;
+			case 1:
+				value = new Long(file.length());
+				break;
+			case 2:
+				value = new Date(file.lastModified());
+				break;
+			}
+
+			return value;
+		}
+
+		public List<File> getFileList() {
+			return fileList;
+		}
+
+		public void setFileList(List<File> fileList) {
+			this.fileList = fileList;
+		}
+
+	}
+
+	public File getCurrentDir() {
+		return currentDir;
+	}
+
+	public void setCurrentDir(File currentDir) {
+		this.currentDir = currentDir;
 	}
 
 }
