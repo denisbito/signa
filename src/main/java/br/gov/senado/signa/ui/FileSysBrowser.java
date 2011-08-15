@@ -1,7 +1,10 @@
 package br.gov.senado.signa.ui;
 
 import java.awt.Dimension;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
+import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -13,9 +16,12 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 /**
  * Rudimentary filesystem browser, for navigating the local filesystem.
@@ -51,11 +57,18 @@ public class FileSysBrowser extends JPanel {
 	/**
 	 * Directory tree shown in the file browser.
 	 */
-	class DirTree extends JTree {
+	class DirTree extends JTree implements TreeSelectionListener {
 		public DirTree() {
 			super(new DirTreeModel(getCurrentDir()));
+			getSelectionModel().setSelectionMode(
+					TreeSelectionModel.SINGLE_TREE_SELECTION);
+			addTreeSelectionListener(this);
 		}
 
+		@Override
+		public void valueChanged(TreeSelectionEvent e) {
+			System.out.println("SELECIONOU NODO DA ÁRVORE!!!");
+		}
 	}
 
 	/**
@@ -69,11 +82,17 @@ public class FileSysBrowser extends JPanel {
 	}
 
 	/**
-	 * Custom TreeModel for the directory tree.
+	 * Custom TreeModel for the directory tree. The tree shows directories only.
 	 */
-	class DirTreeModel implements TreeModel {
+	class DirTreeModel implements TreeModel, FocusListener {
 
 		protected File root;
+		private FileFilter dirOnlyFilter = new FileFilter() {
+			@Override
+			public boolean accept(File file) {
+				return file.isDirectory();
+			}
+		};
 
 		public DirTreeModel(File root) {
 			this.root = root;
@@ -86,9 +105,9 @@ public class FileSysBrowser extends JPanel {
 		@Override
 		public Object getChild(Object parent, int index) {
 			Object child = null;
-			String[] children = ((File) parent).list();
+			File[] children = ((File) parent).listFiles(dirOnlyFilter);
 			if (children != null && index < children.length) {
-				child = new File((File) parent, children[index]);
+				child = children[index];
 			}
 			return child;
 		}
@@ -98,7 +117,7 @@ public class FileSysBrowser extends JPanel {
 		 */
 		@Override
 		public int getChildCount(Object parent) {
-			String[] children = ((File) parent).list();
+			File[] children = ((File) parent).listFiles(dirOnlyFilter);
 			int count = children != null ? children.length : 0;
 			return count;
 		}
@@ -110,11 +129,11 @@ public class FileSysBrowser extends JPanel {
 		@Override
 		public int getIndexOfChild(Object parent, Object child) {
 			int pos = -1;
-			String[] children = ((File) parent).list();
+			File[] children = ((File) parent).listFiles(dirOnlyFilter);
 			if (children != null) {
 				String childName = ((File) child).getName();
 				for (int i = 0; i < children.length; i++) {
-					if (childName.equals(children[i])) {
+					if (childName.equals(children[i].getName())) {
 						pos = i;
 						break;
 					}
@@ -136,7 +155,7 @@ public class FileSysBrowser extends JPanel {
 		 */
 		@Override
 		public boolean isLeaf(Object node) {
-			return ((File) node).isFile();
+			return ((File) node).listFiles(dirOnlyFilter).length < 1;
 		}
 
 		/**
@@ -144,6 +163,16 @@ public class FileSysBrowser extends JPanel {
 		 */
 		@Override
 		public void valueForPathChanged(TreePath path, Object newValue) {
+		}
+
+		@Override
+		public void focusGained(FocusEvent event) {
+			System.out.println("FOCUS!!! ");
+		}
+
+		@Override
+		public void focusLost(FocusEvent event) {
+			// nothing to do on focus lost!
 		}
 
 		// add/remove listener methods won't be implemented, since the JTree
@@ -155,6 +184,7 @@ public class FileSysBrowser extends JPanel {
 		@Override
 		public void removeTreeModelListener(TreeModelListener l) {
 		}
+
 	}
 
 	/**
