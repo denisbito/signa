@@ -19,6 +19,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -63,11 +64,29 @@ public class FileSysBrowser extends JPanel {
 			getSelectionModel().setSelectionMode(
 					TreeSelectionModel.SINGLE_TREE_SELECTION);
 			addTreeSelectionListener(this);
+
+			// change the tree icons
+			DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+			renderer.setLeafIcon(renderer.getClosedIcon());
+			setCellRenderer(renderer);
 		}
 
+		/**
+		 * Respond to node selection in the directory tree.
+		 */
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
 			System.out.println("SELECIONOU NODO DA ÁRVORE!!!");
+		}
+
+		/**
+		 * Customize the node labels to show only the last directory name (or
+		 * else the complete filename path is used!).
+		 */
+		@Override
+		public String convertValueToText(Object value, boolean selected,
+				boolean expanded, boolean leaf, int row, boolean hasFocus) {
+			return ((File) value).getName();
 		}
 	}
 
